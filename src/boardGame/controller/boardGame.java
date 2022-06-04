@@ -1,5 +1,6 @@
 package boardGame.controller;
 
+import boardGame.model.Map;
 import boardGame.view.loadFailView;
 import boardGame.view.startView;
 
@@ -8,6 +9,16 @@ import java.io.IOException;
 
 public class boardGame {
     startView main = new startView();
+
+    private Map map;
+    private ArrayList<Player> players;
+    private ArrayList<Status> status;
+
+    public boardGame() {
+        map = new Map();
+        players = new ArrayList<Player>();
+        status = new ArrayList<Status>();
+    }
 
     public static void onStart() throws IOException {
         loadMap load = new loadMap();

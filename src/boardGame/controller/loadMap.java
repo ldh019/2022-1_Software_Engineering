@@ -3,34 +3,28 @@ package boardGame.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import boardGame.model.Map;
+
+import boardGame.model.Board;
+import boardGame.model.Cell;
 
 public class loadMap {
     private boolean success = false;
-    private Map map;
-    public loadMap() throws IOException {
-        onStart();
-    }
+    private Board board;
 
-    private void onStart() throws IOException {
-        File mapPath = new File("C://Program Files/SEBoardGame/recent.map");
+    public ArrayList<Cell> loadMap() throws IOException {
+        Path cur = Paths.get("");
+        String path = cur.toAbsolutePath().toString() + "\\resources\\recent.map";
+        File mapPath = new File(path);
+        boolean start = false;
+
         success = false;
 
-        map.initialize(Files.readAllLines(mapPath.toPath()));
+        List<String> data = Files.readAllLines(mapPath.toPath());
 
-        if (readMap(map.sendData())) {
-            success = true;
-        }
-    }
-
-    Map map() {
-        return map;
-    }
-
-    private boolean readMap(List<String> data) {
-        boolean start = false;
         for (String line : data) {
             String[] element = line.split(" ");
             if (!start && element[0].equals('S')) {
@@ -55,6 +49,10 @@ public class loadMap {
             } else return false;
         }
         return false;
+    }
+
+    private boolean readMap(File map) throws IOException {
+
     }
 
     private boolean validDirection(String c) {
