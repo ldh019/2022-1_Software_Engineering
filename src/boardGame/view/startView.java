@@ -1,12 +1,11 @@
 package boardGame.view;
 
-import boardGame.controller.boardGame;
+import boardGame.model.BoardGame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -55,7 +54,7 @@ public class startView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    boardGame.onStart();
+                    BoardGame.onStart();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -66,7 +65,7 @@ public class startView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    boardGame.onLoadMap();
+                    BoardGame.onLoadMap();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -76,7 +75,7 @@ public class startView {
         buttonExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boardGame.onExit();
+                BoardGame.onExit();
             }
         });
 

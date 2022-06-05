@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import javax.swing.filechooser.FileFilter;
 
@@ -38,7 +40,9 @@ public class saveMap {
         int returnVal = fileDialog.showOpenDialog(null);
         if (returnVal == 0) {
             File file = fileDialog.getSelectedFile();
-            File save = new File("C://Program Files/SEBoardGame/recent.map");
+
+            String filePath = Paths.get("").toAbsolutePath().toString() + "\\resources\\recent.map";
+            File save = new File(filePath);
 
             Files.copy(file.toPath(), save.toPath(), StandardCopyOption.REPLACE_EXISTING);
 

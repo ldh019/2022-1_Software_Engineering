@@ -6,32 +6,66 @@ public class Cell {
     private String name;
     private CellType type = CellType.NONE;
     private ArrayList<Player> players = new ArrayList<>();
-    private DirectionType previous = DirectionType.NONE;
-    private DirectionType next = DirectionType.NONE;
+    private DirectionType previous;
+    private DirectionType next;
+    private DirectionType bridge;
 
     private int index;
 
     public Cell(ArrayList<String> input) {
-        this.type = transferToType(input.get(0));
-        this.previous = transferToDir(input.get(1));
-        this.next = transferToDir(input.get(2));
+        type = transferToType(input.get(0));
+        switch (type) {
+            case SBRIDGE -> {
+                previous = transferToDir(input.get(1));
+                next = transferToDir(input.get(2));
+                bridge = DirectionType.RIGHT;
+            }
+            case EBRIDGE -> {
+                previous = transferToDir(input.get(1));
+                next = transferToDir(input.get(2));
+                bridge = DirectionType.LEFT;
+            }
+            default -> {
+                previous = transferToDir(input.get(1));
+                next = transferToDir(input.get(2));
+                bridge = DirectionType.NONE;
+            }
+        }
     }
 
-    public void setStart() {
-        this.type = CellType.START;
+    public Cell(ArrayList<String> input, CellType type) {
+        this.type = transferToType(input.get(0));
+        switch (type) {
+            case START -> {
+                previous = DirectionType.NONE;
+                next = transferToDir(input.get(1));
+                bridge = DirectionType.NONE;
+            }
+            case END -> {
+                previous = DirectionType.NONE;
+                next = DirectionType.NONE;
+                bridge = DirectionType.NONE;
+            }
+        }
     }
 
     public void setIndex(int i) {
-        this.index = i;
+        index = i;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public DirectionType getPrevDir() {
-        return this.previous;
+        return previous;
     }
 
     public DirectionType getNextDir() {
-        return this.next;
+        return next;
     }
+
+    public DirectionType getBridgeDir() { return bridge; }
 
     public void setOwner(Player p) {
         players.add(p);

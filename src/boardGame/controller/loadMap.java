@@ -6,53 +6,83 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import boardGame.model.Board;
 import boardGame.model.Cell;
+import boardGame.model.CellType;
 
 public class loadMap {
     private boolean success = false;
-    private Board board;
+    private ArrayList<Cell> map;
 
-    public ArrayList<Cell> loadMap() throws IOException {
-        Path cur = Paths.get("");
-        String path = cur.toAbsolutePath().toString() + "\\resources\\recent.map";
-        File mapPath = new File(path);
-        boolean start = false;
+    public loadMap() {
+        Path currentPath;
+        String filePath;
+        File mapFile;
+        Path mapPath;
+        List<String> mapData;
 
-        success = false;
+        try {
+            currentPath = Paths.get("");
+            filePath = currentPath.toAbsolutePath().toString() + "\\resources\\default.map";
+            mapFile = new File(filePath);
+            mapPath = mapFile.toPath();
 
-        List<String> data = Files.readAllLines(mapPath.toPath());
+            success = true;
 
-        for (String line : data) {
-            String[] element = line.split(" ");
-            if (!start && element[0].equals('S')) {
-                if (element.length == 2 && validDirection(element[1]))
-                    start = true;
-                else return false;
-            } else if (start && element[0].equals('E')) {
-                return element.length == 1;
-            } else if(start) {
-                List<String> cell = new ArrayList<>();
-                cell.add("C"); cell.add("H"); cell.add("S"); cell.add("P");
-                cell.add("B"); cell.add("b");
+            mapData = Files.readAllLines(mapPath);
+            map = new ArrayList<Cell>();
 
-                if (cell.contains(element[0])) {
-                    if (element.length != 3)
-                        return false;
-                    if (validDirection(element[1]))
-                        return false;
-                    if (validDirection(element[2]))
-                        return false;
+            String line = mapData.get(0);
+            ArrayList<String> element = new ArrayList<>(Arrays.asList(line.split(" ")));
+
+            if (validCell(element) == 2) {
+                map.add(new Cell(element, CellType.START));
+
+                for (int i = 1; i < mapData.size(); i++) {
+                    line = mapData.get(i);
+                    element = new ArrayList<String>(Arrays.asList(line.split(" ")));
+
+                    if (validCell(element) == 1) {
+                        map.add(new Cell(element));
+                    }
+                    else if (validCell(element) == 3) {
+                        map.add(new Cell(element, CellType.END));
+                    }
+                    else {
+                        success = false;
+                        break;
+                    }
                 }
-            } else return false;
-        }
-        return false;
+            } else
+                success = false;
+        } catch (IOException e) {}
     }
 
-    private boolean readMap(File map) throws IOException {
+    public ArrayList<Cell> getMap() {
+        if (isSuccess())
+            return map;
+        else
+            return null;
+    }
 
+    private int validCell(ArrayList<String> cell) {
+        if (cell.get(0).equals("S")) {
+            if (cell.size() == 2 && validDirection(cell.get(1)))
+                return 2;
+            else if (cell.size() == 3 && validDirection(cell.get(1), cell.get(2)))
+                return 1;
+            else
+                return 0;
+        }
+        else if (cell.get(0).equals("E") && cell.size() == 1)
+            return 3;
+        else if(validCellType(cell.get(0)) && cell.size() == 3 && validDirection(cell.get(1), cell.get(2)))
+            return 1;
+        else
+            return 0;
     }
 
     private boolean validDirection(String c) {
@@ -63,6 +93,24 @@ public class loadMap {
         list.add("D");
 
         return list.contains(c);
+    }
+
+    private boolean validCellType(String c) {
+        List<String> list = new ArrayList<>();
+        list.add("C"); list.add("H"); list.add("S"); list.add("P");
+        list.add("B"); list.add("b");
+
+        return list.contains(c);
+    }
+
+    private boolean validDirection(String c1, String c2) {
+        List<String> list = new ArrayList<>();
+        list.add("L");
+        list.add("R");
+        list.add("U");
+        list.add("D");
+
+        return list.contains(c1) && list.contains(c2);
     }
 
     public boolean isSuccess() {
