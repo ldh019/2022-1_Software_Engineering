@@ -54,6 +54,7 @@ public class startView {
 
 
         buttonStart.addActionListener(e -> mainV.change());
+        buttonExit.addActionListener(e -> mainV.gameV.controller.exit());
 
         //프레임 설정
         panel.setLayout(fl); // 프레임 레이아웃 설정

@@ -30,8 +30,22 @@ public class BoardGame {
         return moveCount;
     }
 
+    public void setMoveCount(int count) {
+        moveCount = count;
+    }
+
     public int getPlayerNum() {
         return players.size();
+    }
+
+    public ArrayList<Status> getResult() {
+        ArrayList<Status> result = new ArrayList<>();
+
+        for (Player p : players) {
+            result.add(p.getStatus());
+        }
+
+        return result;
     }
 
     private Player getNextPlayer() {
@@ -56,8 +70,24 @@ public class BoardGame {
         currentState = gs;
     }
 
+    public void addBridge() {
+        currentPlayer.getStatus().addBridge();
+    }
+
+    public void resetBridge() {
+        currentPlayer.resetBridgeFlag();
+    }
+
     public GameState getCurrentState() {
         return currentState;
+    }
+
+    public void setCrossBridgeLeft() {
+        currentPlayer.setBridgeFlagLeft();
+    }
+
+    public void setCrossBridgeRight() {
+        currentPlayer.setBridgeFlagRight();
     }
 
     public void addRank() {
@@ -68,19 +98,34 @@ public class BoardGame {
         return rank;
     }
 
-    public void move() {
-
+    public void move(int idx) {
+        currentPlayer.move(idx);
     }
 
     public void roll() {
         currentState = GameState.ROLLING;
-        currentPlayer = getNextPlayer();
 
         moveCount = board.getDie().roll();
     }
 
+    public void startTurn() {
+        currentState = GameState.PLAYING;
+    }
+
+    public void endTurn() {
+        currentState = GameState.DONE;
+
+        currentPlayer = getNextPlayer();
+    }
+
     public void rest() {
         currentPlayer.getStatus().removeBridge();
+
+        currentPlayer = getNextPlayer();
+    }
+
+    public boolean isFinish() {
+        return rank > getPlayerNum();
     }
 
     public void join() {
