@@ -16,7 +16,19 @@ public class BoardGame {
         currentState = GameState.WAITING;
     }
 
-    public Player getNextPlayer() {
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public int getMoveCount() {
+        return moveCount;
+    }
+
+    public int getPlayerNum() {
+        return players.size();
+    }
+
+    private Player getNextPlayer() {
         while (true) {
             playerIndex++;
             if (!players.get(playerIndex).getGoalIn())
@@ -32,7 +44,14 @@ public class BoardGame {
         while (moveCount-- > 0) {
             currentCell = board.getCells().get(currentPlayer.getPosition());
 
+            DirectionType input = getMoveDir();
 
+            if (input == currentCell.getNextDir())
+                currentPlayer.move(currentPlayer.getPosition() + 1);
+            else if (input == currentCell.getPrevDir())
+                currentPlayer.move(currentPlayer.getPosition() - 1);
+            else if (input == currentCell.getBridgeDir())
+                currentPlayer.move(currentCell.getBridgeNumber());
         }
     }
 
@@ -44,11 +63,13 @@ public class BoardGame {
     }
 
     public void join() {
-
+        players.add(new Player());
     }
 
     public void start() {
         playerIndex = 0;
         moveCount = 0;
+
+        join(); join();
     }
 }

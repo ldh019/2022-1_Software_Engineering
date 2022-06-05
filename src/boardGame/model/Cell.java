@@ -9,6 +9,7 @@ public class Cell {
     private DirectionType previous;
     private DirectionType next;
     private DirectionType bridge;
+    private int bridgeNumber;
 
     private int index;
 
@@ -49,6 +50,14 @@ public class Cell {
         }
     }
 
+    public void setBridgeNumber(int bridgeNumber) {
+        this.bridgeNumber = bridgeNumber;
+    }
+
+    public int getBridgeNumber() {
+        return bridgeNumber;
+    }
+
     public void setIndex(int i) {
         index = i;
     }
@@ -66,14 +75,6 @@ public class Cell {
     }
 
     public DirectionType getBridgeDir() { return bridge; }
-
-    public void setOwner(Player p) {
-        players.add(p);
-    }
-
-    public void removeOwner(Player p) {
-        players.remove(p);
-    }
 
     public boolean isStart() {
         return type.equals(CellType.START);
