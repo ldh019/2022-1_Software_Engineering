@@ -4,16 +4,18 @@ import java.util.ArrayList;
 
 public class Cell {
     private String name;
-    private CellType type = CellType.NONE;
-    private ArrayList<Player> players = new ArrayList<>();
+    private CellType type;
     private DirectionType previous;
     private DirectionType next;
     private DirectionType bridge;
     private int bridgeNumber;
+    private int bridgeLeft;
+    private int bridgeRight;
 
     private int index;
 
-    public Cell(ArrayList<String> input) {
+    public Cell(ArrayList<String> input, int i) {
+        index = i;
         type = transferToType(input.get(0));
         switch (type) {
             case SBRIDGE -> {
@@ -34,7 +36,8 @@ public class Cell {
         }
     }
 
-    public Cell(ArrayList<String> input, CellType type) {
+    public Cell(ArrayList<String> input, CellType type, int i) {
+        index = i;
         this.type = transferToType(input.get(0));
         switch (type) {
             case START -> {
@@ -56,6 +59,22 @@ public class Cell {
 
     public int getBridgeNumber() {
         return bridgeNumber;
+    }
+
+    public void setBridgeLeft(int idx) {
+        bridgeLeft = idx;
+    }
+
+    public void setBridgeRight(int idx) {
+        bridgeRight = idx;
+    }
+
+    public int getBridgeLeft() {
+        return bridgeLeft;
+    }
+
+    public int getBridgeRight() {
+        return bridgeRight;
     }
 
     public void setIndex(int i) {

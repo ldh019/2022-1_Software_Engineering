@@ -40,22 +40,34 @@ public class loadMap {
             int Bnum = 0, bnum = 0;
 
             if (validCell(element) == 2) {
-                map.add(new Cell(element, CellType.START));
+                map.add(new Cell(element, CellType.START, 0) );
 
                 for (int i = 1; i < mapData.size(); i++) {
                     line = mapData.get(i);
                     element = new ArrayList<String>(Arrays.asList(line.split(" ")));
 
                     if (validCell(element) == 1) {
-                        map.add(new Cell(element));
+                        Cell tmp = new Cell(element, i);
+
+                        if (tmp.isSbridge()) {
+                            tmp.setBridgeNumber(++Bnum);
+                            ArrayList<String> tmpstr = new ArrayList<>();
+                            tmpstr.add("B");
+                            tmpstr.add("L");
+                            tmpstr.add("R");
+                            Cell bridge = new Cell(tmpstr, -Bnum);
+                            map.add(bridge);
+                            bridge.setBridgeLeft(tmp.getIndex());
+                        }
+                        else if(tmp.isEbridge()) {
+                            tmp.setBridgeNumber(++bnum);
+                            Cell bridge = map.get(-bnum);
+                            bridge.setBridgeRight(i);
+                        }
+                        map.add(tmp);
                     }
                     else if (validCell(element) == 3) {
-                        Cell tmp = new Cell(element, CellType.END);
-                        if (tmp.isSbridge())
-                            tmp.setBridgeNumber(++Bnum);
-                        else if(tmp.isEbridge())
-                            tmp.setBridgeNumber(++bnum);
-                        map.add(tmp);
+                        map.add(new Cell(element, CellType.END, i));
                     }
                     else {
                         success = false;

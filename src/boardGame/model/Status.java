@@ -27,6 +27,10 @@ public class Status {
         saw++;
     }
 
+    public void addBridge() { bridge++; }
+
+    public void removeBridge() { if (bridge > 0) bridge--; }
+
     public int getPdriver() {
         return pDriver;
     }
@@ -39,11 +43,18 @@ public class Status {
         return saw;
     }
 
+    public int getBridge() { return bridge; }
+
     public int getScore() {
         return pDriver + hammer * 2 + saw * 3 + endBonus;
     }
 
-    public void setEndBonus(int point) {
-        endBonus = point;
+    public void setEndBonus(int rank) {
+        switch(rank) {
+            case 1 -> endBonus = 7;
+            case 2 -> endBonus = 3;
+            case 3 -> endBonus = 1;
+            default -> endBonus = 0;
+        }
     }
 }

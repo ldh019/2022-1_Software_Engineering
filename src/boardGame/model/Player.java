@@ -4,11 +4,13 @@ public class Player {
     private Status status;
     private int position;
     private boolean goalIn;
+    private int bridgeFlag;
 
     public Player() {
         status = new Status();
         position = 0;
         goalIn = false;
+        bridgeFlag = 0;
     }
 
     public int getPosition() {
@@ -29,5 +31,21 @@ public class Player {
 
     public boolean getGoalIn() {
         return goalIn;
+    }
+
+    public void setBridgeFlagLeft() {
+        bridgeFlag = -1;
+    }
+
+    public void setBridgeFlagRight() {
+        bridgeFlag = 1;
+    }
+
+    public int getBridgeFlag() {
+        return bridgeFlag;
+    }
+
+    public void resetBridgeFlag() {
+        bridgeFlag = 0;
     }
 }

@@ -9,11 +9,17 @@ public class BoardGame {
     private Player currentPlayer;
     private GameState currentState;
     private int moveCount;
+    private int rank;
+    private boolean goalInFlag;
 
     public BoardGame() {
         board = new Board();
         players = new ArrayList<Player>();
         currentState = GameState.WAITING;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
     public Player getCurrentPlayer() {
@@ -38,21 +44,32 @@ public class BoardGame {
         return players.get(playerIndex);
     }
 
+    public void setGoalInFlag() {
+        goalInFlag = true;
+    }
+
+    public boolean isGoalIn() {
+        return goalInFlag;
+    }
+
+    public void setCurrentState(GameState gs) {
+        currentState = gs;
+    }
+
+    public GameState getCurrentState() {
+        return currentState;
+    }
+
+    public void addRank() {
+        rank++;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
     public void move() {
-        currentState = GameState.MOVING;
-        Cell currentCell;
-        while (moveCount-- > 0) {
-            currentCell = board.getCells().get(currentPlayer.getPosition());
 
-            DirectionType input = getMoveDir();
-
-            if (input == currentCell.getNextDir())
-                currentPlayer.move(currentPlayer.getPosition() + 1);
-            else if (input == currentCell.getPrevDir())
-                currentPlayer.move(currentPlayer.getPosition() - 1);
-            else if (input == currentCell.getBridgeDir())
-                currentPlayer.move(currentCell.getBridgeNumber());
-        }
     }
 
     public void roll() {
@@ -62,14 +79,23 @@ public class BoardGame {
         moveCount = board.getDie().roll();
     }
 
+    public void rest() {
+        currentPlayer.getStatus().removeBridge();
+    }
+
     public void join() {
         players.add(new Player());
     }
 
     public void start() {
+        if (getPlayerNum() < 2)
+            return ;
+        else if (getPlayerNum() > 4)
+            return ;
+
         playerIndex = 0;
         moveCount = 0;
-
-        join(); join();
+        rank = 1;
+        goalInFlag = false;
     }
 }
