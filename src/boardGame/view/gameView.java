@@ -20,7 +20,7 @@ public class gameView {
     mainView parent;
 
     public gameView(mainView parent) {
-        controller = new boardGameController();
+        controller = parent.controller;
         panel = new JPanel();
         controlPanel = new JPanel();
         controlPanel.add(controlView.waitingPanel(this, controller));
@@ -62,6 +62,7 @@ public class gameView {
     }
 
     public JPanel getPanel() {
+        System.out.println("gameview get panel");
         return panel;
     }
 

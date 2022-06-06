@@ -38,14 +38,15 @@ public class Cell {
 
     public Cell(ArrayList<String> input, CellType type, int i) {
         index = i;
-        this.type = transferToType(input.get(0));
         switch (type) {
             case START -> {
+                this.type = CellType.START;
                 previous = DirectionType.NONE;
                 next = transferToDir(input.get(1));
                 bridge = DirectionType.NONE;
             }
             case END -> {
+                this.type = CellType.END;
                 previous = DirectionType.NONE;
                 next = DirectionType.NONE;
                 bridge = DirectionType.NONE;
@@ -136,13 +137,15 @@ public class Cell {
     }
 
     public CellType transferToType(String input) {
-        switch(input) {
+        switch (input) {
             case "E":
                 return CellType.END;
             case "B":
                 return CellType.SBRIDGE;
             case "b":
                 return CellType.EBRIDGE;
+            case "BB":
+                return CellType.BRIDGE;
             case "H":
                 return CellType.HAMMER;
             case "S":

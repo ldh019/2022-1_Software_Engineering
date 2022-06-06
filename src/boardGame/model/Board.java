@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import boardGame.controller.loadMap;
 
 public class Board {
-    private ArrayList<Cell> cells;
+    private Cells cells;
     private Die die;
     private int sizeX;
     private int sizeY;
@@ -21,7 +21,7 @@ public class Board {
         startY = loadMap.getStartY();
     }
 
-    public ArrayList<Cell> getCells() {
+    public Cells getCells() {
         return cells;
     }
 

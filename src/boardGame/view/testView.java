@@ -1,40 +1,43 @@
 package boardGame.view;
 
-import javax.imageio.ImageIO;
+import boardGame.controller.boardGameController;
+import boardGame.model.Board;
+import boardGame.model.Cell;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class testView extends JFrame {
-    BufferedImage img = null;
+    public testView() {
+        this.setSize(1200, 800); // 프레임 크기 설정
+        this.setVisible(true);// 프레임이 보이도록 설정
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE); //창을 종료하면 데몬스레드도 같이 종료
+        this.setLayout(new FlowLayout());
+        Board b = new Board();
+        boardView bv = new boardView();
+        JPanel panel = new JPanel();
 
-    public testView(){
-        setTitle("Load Image test");
-        setSize(1024, 768);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new FlowLayout());
-        try {
-            Path cur = Paths.get("");
-            String path = cur.toAbsolutePath().toString() + "\\src\\boardGame\\resources\\image\\start.png";
-            System.out.println(path);
-            img = ImageIO.read(new File(path));
-        } catch(IOException e){
-            System.out.println(e.getMessage());
-            System.exit(0);
-        }
+        //bv.setboardView(b);
 
-        add(new MyPanel());
-        //add(new MyPanel());
-        setVisible(true);
-    }
+        //panel.add(bv.getPanel());
+       // panel.setLayout(new GridBagLayout());
+        //GridBagConstraints gbc = new GridBagConstraints();
 
-    class MyPanel extends JPanel{
-        public void paint(Graphics g){
-            g.drawImage(img, 0, 0, null);
-        }
+        ArrayList<String> tmp = new ArrayList<>();
+        tmp.add("C"); tmp.add("U"); tmp.add("D");
+        Cell c = new Cell(tmp, 0);
+      /*  gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = gbc.weighty = 1;
+        gbc.gridwidth = gbc.gridheight = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+*/
+        JPanel m = bv.getCell(c);
+        JPanel n = bv.cell;
+        //panel.add(m, gbc);
+
+        this.add(n);
+        this.add(m);
     }
 }

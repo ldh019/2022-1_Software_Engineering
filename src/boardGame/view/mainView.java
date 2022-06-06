@@ -22,7 +22,6 @@ public class mainView extends JFrame {
         panel = new JPanel();
         controller = new boardGameController();
 
-        this.add(new JPanel(0, 50));
         this.add(panel);
         startV = new startView(this);
         gameV = new gameView(this);
@@ -33,8 +32,7 @@ public class mainView extends JFrame {
 
     public void change() {
         panel.removeAll();
-        //this.add(gameV.getPanel());
-        panel.add(new JPanel());
+        panel.add(gameV.getPanel());
         panel.revalidate();
         panel.repaint();
         System.out.println("change");

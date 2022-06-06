@@ -1,10 +1,7 @@
 package boardGame.controller;
 
 import boardGame.model.*;
-import boardGame.view.finishView;
-import boardGame.view.gameView;
-import boardGame.view.mainView;
-import boardGame.view.startView;
+import boardGame.view.*;
 
 import java.awt.event.KeyEvent;
 
@@ -140,6 +137,7 @@ public class boardGameController {
     }
 
     public static void main(String[] args) {
-        mainView main = new mainView();
+        //mainView main = new mainView();
+        new testView();
     }
 }

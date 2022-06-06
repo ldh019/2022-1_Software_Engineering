@@ -11,10 +11,11 @@ import java.util.List;
 
 import boardGame.model.Cell;
 import boardGame.model.CellType;
+import boardGame.model.Cells;
 
 public class loadMap {
     private boolean success = false;
-    private ArrayList<Cell> map;
+    private Cells map;
     private int startX, startY;
     private int maxX, maxY;
     private int curX, curY;
@@ -28,7 +29,7 @@ public class loadMap {
 
         try {
             currentPath = Paths.get("");
-            filePath = currentPath.toAbsolutePath().toString() + "\\resources\\default.map";
+            filePath = currentPath.toAbsolutePath().toString() + "\\resources\\recent.map";
             mapFile = new File(filePath);
             mapPath = mapFile.toPath();
 
@@ -38,7 +39,7 @@ public class loadMap {
             success = true;
 
             mapData = Files.readAllLines(mapPath);
-            map = new ArrayList<Cell>();
+            map = new Cells();
 
             String line = mapData.get(0);
             ArrayList<String> element = new ArrayList<>(Arrays.asList(line.split(" ")));
@@ -46,7 +47,7 @@ public class loadMap {
 
             if (validCell(element) == 2) {
                 map.add(new Cell(element, CellType.START, 0) );
-                setSize(element.get(0));
+                setSize(element.get(1));
 
                 for (int i = 1; i < mapData.size(); i++) {
                     line = mapData.get(i);
@@ -58,7 +59,7 @@ public class loadMap {
                         if (tmp.isSbridge()) {
                             tmp.setBridgeNumber(++Bnum);
                             ArrayList<String> tmpstr = new ArrayList<>();
-                            tmpstr.add("B");
+                            tmpstr.add("BB");
                             tmpstr.add("L");
                             tmpstr.add("R");
                             Cell bridge = new Cell(tmpstr, -Bnum);
@@ -67,15 +68,16 @@ public class loadMap {
                         }
                         else if(tmp.isEbridge()) {
                             tmp.setBridgeNumber(++bnum);
-                            Cell bridge = map.get(-bnum);
+                            Cell bridge = map.getCell(-bnum);
                             bridge.setBridgeRight(i);
                         }
                         map.add(tmp);
-                        setSize(element.get(i));
+                        setSize(element.get(2));
                     }
                     else if (validCell(element) == 3) {
                         map.add(new Cell(element, CellType.END, i));
-                        setSize(element.get(i));
+                        String tmp = mapData.get(i - 1).split(" ")[2];
+                        setSize(tmp);
                     }
                     else {
                         success = false;
@@ -87,16 +89,17 @@ public class loadMap {
 
             if (startX < 0) {
                 maxX = maxX + (-startX);
-                startX = 0;
+                startX = -startX;
             }
             if (startY < 0) {
                 maxY = maxY + (-startY);
-                startY = 0;
+                startY = -startY;
             }
+            maxX++; maxY++;
         } catch (IOException e) {}
     }
 
-    public ArrayList<Cell> getMap() {
+    public Cells getMap() {
         if (isSuccess())
             return map;
         else
