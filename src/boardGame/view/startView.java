@@ -16,6 +16,8 @@ public class startView {
     public startView(mainView mainV) {
         super();
 
+        panel = new JPanel();
+
         JPanel pn1 = new JPanel(); // 패널1
         JPanel pn2 = new JPanel(); // 패널2
         JPanel titlePanel = new JPanel();

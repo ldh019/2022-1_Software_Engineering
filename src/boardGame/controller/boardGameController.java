@@ -11,6 +11,10 @@ import java.awt.event.KeyEvent;
 public class boardGameController {
     private static BoardGame game;
 
+    public boardGameController() {
+        reset();
+    }
+
     public void exit() {
         System.exit(0);
     }
@@ -116,13 +120,10 @@ public class boardGameController {
             game.setGoalInFlag();
         } else if (currentCell.isPdriver()) {
             game.getCurrentPlayer().getStatus().addPdriver();
-            currentCell.removeTool();
         } else if (currentCell.isHammer()) {
             game.getCurrentPlayer().getStatus().addHammer();
-            currentCell.removeTool();
         } else if (currentCell.isSaw()) {
             game.getCurrentPlayer().getStatus().addSaw();
-            currentCell.removeTool();
         }
 
         return game;
@@ -140,9 +141,5 @@ public class boardGameController {
 
     public static void main(String[] args) {
         mainView main = new mainView();
-
-        main.startV = new startView(main);
-        main.gameV = new gameView(main);
-        main.finishV = new finishView(game);
     }
 }

@@ -8,10 +8,13 @@ import java.util.ArrayList;
 
 public class finishView {
     private JPanel panel;
+    private ArrayList<Status> result;
 
-    public finishView(BoardGame game) {
+    public finishView() {
         panel = new JPanel();
+    }
 
+    public void setResult(BoardGame game) {
         ArrayList<Status> result = game.getResult();
     }
 

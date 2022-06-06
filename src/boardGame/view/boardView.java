@@ -14,10 +14,16 @@ public class boardView {
     private int[] size, start;
     private ArrayList<Cell> cells;
 
-    public boardView(Board board) {
+    public boardView() {
+        panel = new JPanel();
+    }
+
+    public void setboardView(Board board) {
         size = board.getSize();
         cells = board.getCells();
         start = board.getStart();
+
+        panel = new JPanel();
 
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();

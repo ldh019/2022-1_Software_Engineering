@@ -22,10 +22,12 @@ public class gameView {
     public gameView(mainView parent) {
         controller = new boardGameController();
         panel = new JPanel();
+        controlPanel = new JPanel();
         controlPanel.add(controlView.waitingPanel(this, controller));
         panel.setLayout(new BorderLayout());
 
-        boardV = new boardView(game.getBoard());
+        game = controller.start();
+        boardV = new boardView();
         statusV = new statusView();
         this.parent = parent;
 
@@ -56,7 +58,7 @@ public class gameView {
         game = controller.endTurn();
 
         if (game.isFinish())
-            parent.finish();
+            parent.finish(game);
     }
 
     public JPanel getPanel() {
