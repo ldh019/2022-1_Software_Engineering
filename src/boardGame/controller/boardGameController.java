@@ -23,6 +23,10 @@ public class boardGameController {
         return game.getPlayerNum() >= 2 && game.getPlayerNum() <= 4;
     }
 
+    public int[] getSize() {
+        return game.getBoard().getSize();
+    }
+
     public BoardGame start() {
         game.start();
 

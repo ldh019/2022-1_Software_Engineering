@@ -25,7 +25,7 @@ public class gameView {
         controlPanel.add(controlView.waitingPanel(this, controller));
         panel.setLayout(new BorderLayout());
 
-        boardV = new boardView();
+        boardV = new boardView(game.getBoard());
         statusV = new statusView();
         this.parent = parent;
 

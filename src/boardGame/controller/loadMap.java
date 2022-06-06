@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import boardGame.model.Board;
 import boardGame.model.Cell;
 import boardGame.model.CellType;
 
 public class loadMap {
     private boolean success = false;
     private ArrayList<Cell> map;
+    private int startX, startY;
+    private int maxX, maxY;
+    private int curX, curY;
 
     public loadMap() {
         Path currentPath;
@@ -30,6 +32,9 @@ public class loadMap {
             mapFile = new File(filePath);
             mapPath = mapFile.toPath();
 
+            curX = curY = 0;
+
+            startX = startY = maxX = maxY = 0;
             success = true;
 
             mapData = Files.readAllLines(mapPath);
@@ -41,6 +46,7 @@ public class loadMap {
 
             if (validCell(element) == 2) {
                 map.add(new Cell(element, CellType.START, 0) );
+                setSize(element.get(0));
 
                 for (int i = 1; i < mapData.size(); i++) {
                     line = mapData.get(i);
@@ -65,9 +71,11 @@ public class loadMap {
                             bridge.setBridgeRight(i);
                         }
                         map.add(tmp);
+                        setSize(element.get(i));
                     }
                     else if (validCell(element) == 3) {
                         map.add(new Cell(element, CellType.END, i));
+                        setSize(element.get(i));
                     }
                     else {
                         success = false;
@@ -76,6 +84,15 @@ public class loadMap {
                 }
             } else
                 success = false;
+
+            if (startX < 0) {
+                maxX = maxX + (-startX);
+                startX = 0;
+            }
+            if (startY < 0) {
+                maxY = maxY + (-startY);
+                startY = 0;
+            }
         } catch (IOException e) {}
     }
 
@@ -133,5 +150,35 @@ public class loadMap {
 
     public boolean isSuccess() {
         return success;
+    }
+
+    public int getMaxX() {
+        return maxX;
+    }
+
+    public int getMaxY() {
+        return maxY;
+    }
+
+    public int getStartX() {
+        return startX;
+    }
+
+    public int getStartY() {
+        return startY;
+    }
+
+    public void setSize(String dir) {
+        switch(dir) {
+            case "U" -> curY--;
+            case "D" -> curY++;
+            case "L" -> curX--;
+            case "R" -> curX++;
+        }
+
+        if (curY < startY) startY = curY;
+        if (curY > maxY) maxY = curY;
+        if (curX < startX) startX = curX;
+        if (curX > maxX) maxX = curX;
     }
 }
