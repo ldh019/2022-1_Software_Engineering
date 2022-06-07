@@ -33,7 +33,7 @@ class FileTypeFilter extends FileFilter {
 public class saveMap {
     public static int load() throws IOException {
         JFileChooser fileDialog = new JFileChooser();
-        FileFilter txtFilter = new FileTypeFilter(".txt", "텍스트 파일");
+        FileFilter txtFilter = new FileTypeFilter(".map", "게임 지도 파일");
 
         fileDialog.addChoosableFileFilter(txtFilter);
 

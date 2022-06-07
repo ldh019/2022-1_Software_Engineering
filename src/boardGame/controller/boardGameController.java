@@ -3,17 +3,18 @@ package boardGame.controller;
 import boardGame.model.*;
 import boardGame.view.*;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class boardGameController {
     private static BoardGame game;
+    private static gameView gameV;
+    private static resultView resultV;
 
     public boardGameController() {
         reset();
-    }
-
-    public void exit() {
-        System.exit(0);
     }
 
     public void reset() {
@@ -29,14 +30,20 @@ public class boardGameController {
     }
 
     public BoardGame start() {
-        game.start();
+        boolean result = game.start();
+
+        if (result) return game;
+        else return null;
+    }
+
+    public BoardGame join() {
+        game.join();
 
         return game;
     }
 
-    public BoardGame join(int num) {
-        for (int i = 0; i < num; i++)
-            game.join();
+    public BoardGame leave() {
+        game.leave();
 
         return game;
     }
@@ -136,8 +143,41 @@ public class boardGameController {
         return game;
     }
 
+    private static void backToStart(gameView gameV) {
+        gameV.onExit();
+        programExecute();
+    }
+
+    private static void gameEnter(startView startV) {
+        startV.onExit();
+        gameV = new gameView();
+
+        gameV.exitButton.addActionListener(e -> backToStart(gameV));
+    }
+
+    private static void newMapLoad() throws IOException {
+        saveMap.load();
+    }
+
+    private static void gameExit() {
+        System.exit(0);
+    }
+
+    private static void programExecute() {
+        startView startV = new startView();
+
+        startV.buttonStart.addActionListener(e -> gameEnter(startV));
+        startV.buttonLoad.addActionListener(e -> {
+            try {
+                newMapLoad();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        startV.buttonExit.addActionListener(e -> gameExit());
+    }
+
     public static void main(String[] args) {
-        //mainView main = new mainView();
-        new testView();
+        programExecute();
     }
 }

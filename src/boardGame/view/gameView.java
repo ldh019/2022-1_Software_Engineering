@@ -3,6 +3,8 @@ package boardGame.view;
 import boardGame.controller.boardGameController;
 import boardGame.model.BoardGame;
 import boardGame.model.Cell;
+import boardGame.model.Cells;
+import boardGame.model.DirectionType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,33 +13,168 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class gameView {
-    JPanel panel, controlPanel;
-    boardView boardV;
-    statusView statusV;
-    boardGameController controller;
-    static BoardGame game;
-    mainView parent;
+public class gameView extends JFrame{
+    private JPanel mainPanel, controlPanel;
+    private JPanel boardPanel;
+    private JPanel joinPanel, statusPanel, buttonJoinPanel, buttonPlayPanel;
+    public JButton startButton, exitButton, rollButton, restButton;
+    public JButton plusButton, minusButton;
+    private JLabel playerCount;
+    private boardGameController controller;
+    private BoardGame game;
 
-    public gameView(mainView parent) {
-        controller = parent.controller;
-        panel = new JPanel();
+    public gameView() {
+        this.setLayout(new BorderLayout());
+
+        controller = new boardGameController();
+
+        //Main Panel setting start
+        mainPanel = new JPanel();
+
+        //Board Panel setting start
+        boardPanel = new JPanel();
+        boardPanel.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = gbc.weighty = 1;
+        gbc.gridwidth = gbc.gridheight = 1;
+
+        int[] size = game.getBoard().getSize();
+        Cells cells = game.getBoard().getCells();
+        int[] start = game.getBoard().getStart();
+
+        for (Cell i : cells) {
+            if (i.isStart()) {
+                gbc.gridx = start[0];
+                gbc.gridy = start[1];
+
+                JPanel cell = new JPanel();
+                JLabel imgLabel = new JLabel();
+                String cellImage = getCell(i);
+                ImageIcon icon = new ImageIcon(cellImage);
+
+                imgLabel.setIcon(icon);
+                cell.add(imgLabel);
+                boardPanel.add(cell, gbc);
+            }
+            else if (!i.isBridge()){
+                if (i.getPrevDir() == DirectionType.LEFT)
+                    gbc.gridx++;
+                else if (i.getPrevDir() == DirectionType.RIGHT)
+                    gbc.gridx--;
+                else if (i.getPrevDir() == DirectionType.UP)
+                    gbc.gridy++;
+                else if (i.getPrevDir() == DirectionType.DOWN)
+                    gbc.gridy--;
+
+                JPanel cell = new JPanel();
+                JLabel imgLabel = new JLabel();
+                String cellImage = getCell(i);
+                ImageIcon icon = new ImageIcon(cellImage);
+
+                imgLabel.setIcon(icon);
+                cell.add(imgLabel);
+                boardPanel.add(cell, gbc);
+
+                if (i.isSbridge()) {
+                    gbc.gridx++;
+                    cell = new JPanel();
+                    imgLabel = new JLabel();
+                    cellImage = "src/boardGame/resources/image/bridge.png";
+                    icon = new ImageIcon(cellImage);
+
+                    imgLabel.setIcon(icon);
+                    cell.add(imgLabel);
+                    boardPanel.add(cell, gbc);
+
+                    boardPanel.add(cell, gbc);
+                    gbc.gridx--;
+                }
+            }
+        }
+        //Board Panel setting end
+
+        mainPanel.add(boardPanel);
+        //Main Panel setting end
+
+        //Control Panel setting start
         controlPanel = new JPanel();
-        controlPanel.add(controlView.waitingPanel(this, controller));
-        panel.setLayout(new BorderLayout());
+        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 
-        game = controller.start();
-        boardV = new boardView();
-        statusV = new statusView();
-        this.parent = parent;
+        //Join Panel setting start
+        joinPanel = new JPanel();
+        joinPanel.setLayout(new FlowLayout());
 
-        panel.add(boardV.getPanel(), BorderLayout.CENTER);
-        panel.add(statusV.getPanel(), BorderLayout.EAST);
+        plusButton = new JButton("+");
+        minusButton = new JButton("-");
+        playerCount = new JLabel("2");
+
+        plusButton.addActionListener(e -> {
+            game = controller.join();
+            playerCount.setText(Integer.toString(game.getPlayerNum()));
+        });
+
+        minusButton.addActionListener(e -> {
+            controller.leave();
+            playerCount.setText(Integer.toString(game.getPlayerNum()));
+        });
+
+        joinPanel.add(minusButton);
+        joinPanel.add(playerCount);
+        joinPanel.add(plusButton);
+        //Join Panel setting end
+
+        //Status Panel setting start
+        statusPanel = new JPanel();
+        statusPanel.setLayout(new GridLayout());
+        //Status Panel setting end
+
+        //Button Join Panel setting start
+        buttonJoinPanel = new JPanel();
+        buttonJoinPanel.setLayout(new FlowLayout());
+
+        startButton = new JButton("START");
+        exitButton = new JButton("EXIT");
+
+        startButton.addActionListener(e -> {
+            game = controller.start();
+        });
+
+        buttonJoinPanel.add(startButton);
+        buttonJoinPanel.add(exitButton);
+        //Button Join Panel setting end
+
+        //Button Play Panel setting start
+        buttonPlayPanel = new JPanel();
+        buttonPlayPanel.setLayout(new FlowLayout());
+
+        rollButton = new JButton("ROLL");
+        restButton = new JButton("REST");
+
+        rollButton.addActionListener(e -> {
+            game = controller.roll();
+        });
+
+        restButton.addActionListener(e -> {
+            game = controller.rest();
+        });
+
+        buttonPlayPanel.add(rollButton);
+        buttonPlayPanel.add(restButton);
+        //Button Join Panel setting end
+
+        controlPanel.add(joinPanel);
+        controlPanel.add(buttonJoinPanel);
+        //Control Panel setting done
+
+        this.add(mainPanel, BorderLayout.CENTER);
+        this.add(controlPanel, BorderLayout.EAST);
     }
 
     public void change() {
         controlPanel.removeAll();
-        controlPanel.add(controlView.playingPanel(this, controller));
+        controlPanel.add(statusPanel);
 
         controller.reset();
         game = controller.start();
@@ -45,7 +182,7 @@ public class gameView {
 
     public void moving() {
         while (game.getMoveCount() > 0) {
-            panel.addKeyListener(new KeyAdapter() {
+            this.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyTyped(KeyEvent e) {
                     super.keyTyped(e);
@@ -58,60 +195,35 @@ public class gameView {
         game = controller.endTurn();
 
         if (game.isFinish())
-            parent.finish(game);
+            ;
+    }
+    
+
+    public String getCell(Cell c) {
+        String cellImage = "";
+
+        if (c.isStart())
+            cellImage = "src/boardGame/resources/image/start.png";
+        else if (c.isEnd())
+            cellImage = "src/boardGame/resources/image/start.png";
+        else if (c.isEbridge() || c.isCell())
+            cellImage = "src/boardGame/resources/image/cell.png";
+        else if (c.isHammer())
+            cellImage = "src/boardGame/resources/image/hammer.png";
+        else if (c.isPdriver())
+            cellImage = "src/boardGame/resources/image/pdriver.png";
+        else if (c.isSaw())
+            cellImage = "src/boardGame/resources/image/saw.png";
+        else if (c.isSbridge())
+            cellImage = "src/boardGame/resources/image/sbridge.png";
+        else if (c.isBridge())
+            cellImage = "src/boardGame/resources/image/bridge.png";
+
+        return cellImage;
     }
 
-    public JPanel getPanel() {
-        System.out.println("gameview get panel");
-        return panel;
-    }
-
-    static class controlView {
-        public static JPanel waitingPanel(gameView parent, boardGameController controller) {
-            JPanel panel = new JPanel();
-            JLabel text = new JLabel();
-            JTextField tf = new JTextField();
-            JButton start = new JButton();
-            BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
-            final int[] number = new int[0];
-
-            start.setText("시작");
-            panel.setLayout(bl);
-            text.setText("게임에 참가할 인원을 입력해주세요.");
-
-            panel.add(text);
-            panel.add(tf);
-            panel.add(start);
-
-            tf.addActionListener(e -> number[0] = Integer.parseInt(tf.getText()));
-            start.addActionListener(e -> {
-                controller.join(number[0]);
-
-                if (controller.canPlay())
-                    parent.change();
-            });
-
-            return panel;
-        }
-
-        public static JPanel playingPanel(gameView parent, boardGameController controller) {
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-            JButton roll, rest;
-            roll = new JButton("주사위 굴리기");
-            rest = new JButton("한 번 쉬기");
-
-            roll.addActionListener(actionEvent -> {
-                controller.startTurn();
-                game = controller.roll();
-                parent.moving();
-            });
-
-            rest.addActionListener(actionEvent -> game = controller.rest());
-
-            return panel;
-        }
+    public void onExit() {
+        this.dispose();
     }
 }
 

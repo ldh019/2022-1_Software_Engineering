@@ -3,17 +3,13 @@ package boardGame.view;
 import javax.swing.*;
 import java.awt.*;
 
-public class startView {
+public class startView extends JFrame{
     public JPanel panel;
     public JButton buttonStart;
     public JButton buttonLoad;
     public JButton buttonExit;
 
-    public JPanel getPanel() {
-        return panel;
-    }
-
-    public startView(mainView mainV) {
+    public startView() {
         super();
 
         panel = new JPanel();
@@ -54,16 +50,16 @@ public class startView {
         pn2.add(buttonLoad); // 컨테이너(패널) 안 컴포넌트(버튼2) 넣기
         pn2.add(buttonExit);
 
-
-        buttonStart.addActionListener(e -> mainV.change());
-        buttonExit.addActionListener(e -> mainV.gameV.controller.exit());
-
         //프레임 설정
-        panel.setLayout(fl); // 프레임 레이아웃 설정
-        panel.add(new JPanel(), BorderLayout.NORTH);
-        panel.add(pn1, BorderLayout.CENTER); // 큰 컨테이너(프레임) 안 작은 컨테이너(패널1) 넣기
-        panel.add(new JPanel(), BorderLayout.SOUTH); // 큰 컨테이너(프레임) 안 작은 컨테이너(패널2) 넣기
-        panel.setSize(1200, 900); // 프레임 크기 설정
-        panel.setVisible(true);// 프레임이 보이도록 설정
+        this.setLayout(fl); // 프레임 레이아웃 설정
+        this.add(new JPanel(), BorderLayout.NORTH);
+        this.add(pn1, BorderLayout.CENTER); // 큰 컨테이너(프레임) 안 작은 컨테이너(패널1) 넣기
+        this.add(new JPanel(), BorderLayout.SOUTH); // 큰 컨테이너(프레임) 안 작은 컨테이너(패널2) 넣기
+        this.setSize(1200, 900); // 프레임 크기 설정
+        this.setVisible(true);// 프레임이 보이도록 설정
+    }
+
+    public void onExit() {
+        this.dispose();
     }
 }

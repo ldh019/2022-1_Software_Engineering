@@ -6,11 +6,11 @@ import boardGame.model.Status;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class finishView {
+public class resultView {
     private JPanel panel;
     private ArrayList<Status> result;
 
-    public finishView() {
+    public resultView() {
         panel = new JPanel();
     }
 

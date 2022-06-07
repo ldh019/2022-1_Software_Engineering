@@ -16,6 +16,8 @@ public class BoardGame {
         board = new Board();
         players = new ArrayList<Player>();
         currentState = GameState.WAITING;
+
+        this.join(); this.join();
     }
 
     public Board getBoard() {
@@ -129,18 +131,26 @@ public class BoardGame {
     }
 
     public void join() {
-        players.add(new Player());
+        if (players.size() < 4)
+            players.add(new Player());
     }
 
-    public void start() {
+    public void leave() {
+        if (players.size() > 2)
+            players.remove(players.size() - 1);
+    }
+
+    public boolean start() {
         if (getPlayerNum() < 2)
-            return ;
+            return false;
         else if (getPlayerNum() > 4)
-            return ;
+            return false;
 
         playerIndex = 0;
         moveCount = 0;
         rank = 1;
         goalInFlag = false;
+
+        return true;
     }
 }
