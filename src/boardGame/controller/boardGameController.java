@@ -17,23 +17,16 @@ public class boardGameController {
         reset();
     }
 
-    public void reset() {
+    public BoardGame reset() {
         game = new BoardGame();
-    }
 
-    public boolean canPlay() {
-        return game.getPlayerNum() >= 2 && game.getPlayerNum() <= 4;
-    }
-
-    public int[] getSize() {
-        return game.getBoard().getSize();
+        return game;
     }
 
     public BoardGame start() {
-        boolean result = game.start();
+        game.start();
 
-        if (result) return game;
-        else return null;
+        return game;
     }
 
     public BoardGame join() {

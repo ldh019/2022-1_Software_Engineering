@@ -40,6 +40,10 @@ public class BoardGame {
         return players.size();
     }
 
+    public int getPlayerIndex() {
+        return playerIndex;
+    }
+
     public ArrayList<Status> getResult() {
         ArrayList<Status> result = new ArrayList<>();
 
@@ -132,7 +136,7 @@ public class BoardGame {
 
     public void join() {
         if (players.size() < 4)
-            players.add(new Player());
+            players.add(new Player(players.size() + 1));
     }
 
     public void leave() {
@@ -140,17 +144,12 @@ public class BoardGame {
             players.remove(players.size() - 1);
     }
 
-    public boolean start() {
-        if (getPlayerNum() < 2)
-            return false;
-        else if (getPlayerNum() > 4)
-            return false;
-
+    public void start() {
         playerIndex = 0;
         moveCount = 0;
         rank = 1;
         goalInFlag = false;
 
-        return true;
+        startTurn();
     }
 }

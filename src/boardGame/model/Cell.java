@@ -47,7 +47,7 @@ public class Cell {
             }
             case END -> {
                 this.type = CellType.END;
-                previous = DirectionType.NONE;
+                previous = transferToDir(input.get(1));
                 next = DirectionType.NONE;
                 bridge = DirectionType.NONE;
             }

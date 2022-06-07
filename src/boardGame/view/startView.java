@@ -57,6 +57,7 @@ public class startView extends JFrame{
         this.add(new JPanel(), BorderLayout.SOUTH); // 큰 컨테이너(프레임) 안 작은 컨테이너(패널2) 넣기
         this.setSize(1200, 900); // 프레임 크기 설정
         this.setVisible(true);// 프레임이 보이도록 설정
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     public void onExit() {

@@ -7,26 +7,41 @@ import boardGame.model.Cells;
 import boardGame.model.DirectionType;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class gameView extends JFrame{
     private JPanel mainPanel, controlPanel;
     private JPanel boardPanel;
     private JPanel joinPanel, statusPanel, buttonJoinPanel, buttonPlayPanel;
+    private JPanel turnPanel;
+    private JLabel turnLabel;
+    private String turnString;
+    private JTable statusTable;
+    private JScrollPane scrollPane;
+    private DefaultTableModel dtm;
     public JButton startButton, exitButton, rollButton, restButton;
     public JButton plusButton, minusButton;
     private JLabel playerCount;
     private boardGameController controller;
     private BoardGame game;
 
+    private String[] header;
+    private ArrayList<String[]> full_content;
+
+    private String[][] contents;
+
     public gameView() {
         this.setLayout(new BorderLayout());
 
         controller = new boardGameController();
+        game = controller.reset();
 
         //Main Panel setting start
         mainPanel = new JPanel();
@@ -39,8 +54,8 @@ public class gameView extends JFrame{
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = gbc.weighty = 1;
         gbc.gridwidth = gbc.gridheight = 1;
+        gbc.ipadx = gbc.ipady = 0;
 
-        int[] size = game.getBoard().getSize();
         Cells cells = game.getBoard().getCells();
         int[] start = game.getBoard().getStart();
 
@@ -49,14 +64,12 @@ public class gameView extends JFrame{
                 gbc.gridx = start[0];
                 gbc.gridy = start[1];
 
-                JPanel cell = new JPanel();
                 JLabel imgLabel = new JLabel();
                 String cellImage = getCell(i);
                 ImageIcon icon = new ImageIcon(cellImage);
 
                 imgLabel.setIcon(icon);
-                cell.add(imgLabel);
-                boardPanel.add(cell, gbc);
+                boardPanel.add(imgLabel, gbc);
             }
             else if (!i.isBridge()){
                 if (i.getPrevDir() == DirectionType.LEFT)
@@ -68,27 +81,21 @@ public class gameView extends JFrame{
                 else if (i.getPrevDir() == DirectionType.DOWN)
                     gbc.gridy--;
 
-                JPanel cell = new JPanel();
                 JLabel imgLabel = new JLabel();
                 String cellImage = getCell(i);
                 ImageIcon icon = new ImageIcon(cellImage);
 
                 imgLabel.setIcon(icon);
-                cell.add(imgLabel);
-                boardPanel.add(cell, gbc);
+                boardPanel.add(imgLabel, gbc);
 
                 if (i.isSbridge()) {
                     gbc.gridx++;
-                    cell = new JPanel();
                     imgLabel = new JLabel();
                     cellImage = "src/boardGame/resources/image/bridge.png";
                     icon = new ImageIcon(cellImage);
 
                     imgLabel.setIcon(icon);
-                    cell.add(imgLabel);
-                    boardPanel.add(cell, gbc);
-
-                    boardPanel.add(cell, gbc);
+                    boardPanel.add(imgLabel, gbc);
                     gbc.gridx--;
                 }
             }
@@ -102,6 +109,12 @@ public class gameView extends JFrame{
         controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 
+        turnPanel = new JPanel();
+        turnLabel = new JLabel();
+        turnString = "Turn Player : ";
+        turnLabel.setFont(new Font(turnLabel.getFont().getFontName(), Font.PLAIN, 30));
+        turnPanel.add(turnLabel);
+
         //Join Panel setting start
         joinPanel = new JPanel();
         joinPanel.setLayout(new FlowLayout());
@@ -113,11 +126,19 @@ public class gameView extends JFrame{
         plusButton.addActionListener(e -> {
             game = controller.join();
             playerCount.setText(Integer.toString(game.getPlayerNum()));
+
+            if (game.getPlayerNum() > dtm.getRowCount()) {
+                dtm.addRow(get_status_contents(game.getPlayerNum()));
+            }
         });
 
         minusButton.addActionListener(e -> {
             controller.leave();
             playerCount.setText(Integer.toString(game.getPlayerNum()));
+
+            if (game.getPlayerNum() < dtm.getRowCount()) {
+                dtm.removeRow(game.getPlayerNum());
+            }
         });
 
         joinPanel.add(minusButton);
@@ -128,6 +149,24 @@ public class gameView extends JFrame{
         //Status Panel setting start
         statusPanel = new JPanel();
         statusPanel.setLayout(new GridLayout());
+
+        header = new String[]{"Player", "Bridge", "P-Driver", "Hammer", "Saw", "Score"};
+        dtm = new DefaultTableModel(header, 0);
+        statusTable = new JTable(dtm);
+        dtm.addRow(get_status_contents(1));
+        dtm.addRow(get_status_contents(2));
+
+        DefaultTableCellRenderer tscr = new DefaultTableCellRenderer();
+        tscr.setHorizontalAlignment(SwingConstants.CENTER);
+        TableColumnModel tcm = statusTable.getColumnModel();
+        for (int i = 0; i < tcm.getColumnCount(); i++)
+            tcm.getColumn(i).setCellRenderer(tscr);
+
+        statusTable.setRowHeight(30);
+
+        scrollPane = new JScrollPane(statusTable);
+        statusPanel.add(scrollPane);
+
         //Status Panel setting end
 
         //Button Join Panel setting start
@@ -138,7 +177,7 @@ public class gameView extends JFrame{
         exitButton = new JButton("EXIT");
 
         startButton.addActionListener(e -> {
-            game = controller.start();
+            change();
         });
 
         buttonJoinPanel.add(startButton);
@@ -168,16 +207,31 @@ public class gameView extends JFrame{
         controlPanel.add(buttonJoinPanel);
         //Control Panel setting done
 
+        this.add(new JPanel(), BorderLayout.NORTH);
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(controlPanel, BorderLayout.EAST);
+
+        this.setSize(1200, 900); // 프레임 크기 설정
+        this.setVisible(true);// 프레임이 보이도록 설정
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     public void change() {
         controlPanel.removeAll();
-        controlPanel.add(statusPanel);
 
-        controller.reset();
+        controlPanel.add(turnPanel);
+        controlPanel.add(statusPanel);
+        controlPanel.add(buttonPlayPanel);
+
+        scrollPane.setPreferredSize(new Dimension(350, 30));
+
+        game = controller.reset();
         game = controller.start();
+
+        turnLabel.setText(turnString + (game.getPlayerIndex() + 1));
+
+        controlPanel.revalidate();
+        controlPanel.repaint();
     }
 
     public void moving() {
@@ -197,7 +251,15 @@ public class gameView extends JFrame{
         if (game.isFinish())
             ;
     }
-    
+
+    private String[] get_status_contents(int idx) {
+        String[] ret = new String[6];
+
+        Arrays.fill(ret, "0");
+        ret[0] = Integer.toString(idx);
+
+        return ret;
+    }
 
     public String getCell(Cell c) {
         String cellImage = "";
@@ -205,7 +267,7 @@ public class gameView extends JFrame{
         if (c.isStart())
             cellImage = "src/boardGame/resources/image/start.png";
         else if (c.isEnd())
-            cellImage = "src/boardGame/resources/image/start.png";
+            cellImage = "src/boardGame/resources/image/end.png";
         else if (c.isEbridge() || c.isCell())
             cellImage = "src/boardGame/resources/image/cell.png";
         else if (c.isHammer())

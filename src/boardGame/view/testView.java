@@ -7,7 +7,7 @@ import boardGame.model.Cell;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-
+/*
 public class testView extends JFrame {
     public testView() {
         this.setSize(1200, 800); // 프레임 크기 설정
@@ -15,7 +15,6 @@ public class testView extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE); //창을 종료하면 데몬스레드도 같이 종료
         this.setLayout(new FlowLayout());
         Board b = new Board();
-        boardView bv = new boardView();
         JPanel panel = new JPanel();
 
         //bv.setboardView(b);
@@ -32,7 +31,7 @@ public class testView extends JFrame {
         gbc.gridwidth = gbc.gridheight = 1;
         gbc.gridx = 0;
         gbc.gridy = 0;
-*/
+
         JPanel m = bv.getCell(c);
         JPanel n = bv.cell;
         //panel.add(m, gbc);
@@ -41,3 +40,4 @@ public class testView extends JFrame {
         this.add(m);
     }
 }
+*/

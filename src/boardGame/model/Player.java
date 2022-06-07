@@ -6,7 +6,7 @@ public class Player {
     private boolean goalIn;
     private int bridgeFlag;
 
-    public Player() {
+    public Player(int idx) {
         status = new Status();
         position = 0;
         goalIn = false;

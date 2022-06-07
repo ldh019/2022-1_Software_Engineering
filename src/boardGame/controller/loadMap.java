@@ -75,8 +75,15 @@ public class loadMap {
                         setSize(element.get(2));
                     }
                     else if (validCell(element) == 3) {
-                        map.add(new Cell(element, CellType.END, i));
                         String tmp = mapData.get(i - 1).split(" ")[2];
+                        switch(tmp) {
+                            case "U" -> element.add("D");
+                            case "D" -> element.add("U");
+                            case "L" -> element.add("R");
+                            case "R" -> element.add("L");
+                        }
+
+                        map.add(new Cell(element, CellType.END, i));
                         setSize(tmp);
                     }
                     else {
