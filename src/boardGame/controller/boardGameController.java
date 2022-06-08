@@ -8,13 +8,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
-public class boardGameController {
+public class boardGameController implements Cloneable{
     private static BoardGame game;
     private static gameView gameV;
     private static resultView resultV;
 
     public boardGameController() {
         reset();
+    }
+
+    @Override
+    public boardGameController clone() throws CloneNotSupportedException {
+        return (boardGameController) super.clone();
     }
 
     public BoardGame reset() {
@@ -53,19 +58,19 @@ public class boardGameController {
         return game;
     }
 
-    public BoardGame move(KeyEvent e) {
+    public BoardGame move(String d) {
         game.setCurrentState(GameState.MOVING);
         Player currentPlayer = game.getCurrentPlayer();
-        Cell currentCell = game.getBoard().getCells().get(currentPlayer.getPosition());
+        Cell currentCell = game.getBoard().getCells().getCell(currentPlayer.getPosition());
 
         game.setMoveCount(game.getMoveCount() - 1);
 
         DirectionType input;
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP -> input = DirectionType.UP;
-            case KeyEvent.VK_DOWN -> input = DirectionType.DOWN;
-            case KeyEvent.VK_LEFT -> input = DirectionType.LEFT;
-            case KeyEvent.VK_RIGHT -> input = DirectionType.RIGHT;
+        switch (d) {
+            case "U", "u" -> input = DirectionType.UP;
+            case "D", "d" -> input = DirectionType.DOWN;
+            case "L", "l" -> input = DirectionType.LEFT;
+            case "R", "r" -> input = DirectionType.RIGHT;
             default -> input = DirectionType.NONE;
         }
 
@@ -108,7 +113,7 @@ public class boardGameController {
     }
 
     public BoardGame moveAfter() {
-        Cell currentCell = game.getBoard().getCells().get(game.getCurrentPlayer().getPosition());
+        Cell currentCell = game.getBoard().getCells().getCell(game.getCurrentPlayer().getPosition());
 
         if (currentCell.isEnd()) {
             game.getCurrentPlayer().setGoalIn();
@@ -126,8 +131,9 @@ public class boardGameController {
         return game;
     }
 
-    public void startTurn() {
+    public BoardGame startTurn() {
         game.startTurn();
+        return game;
     }
 
     public BoardGame endTurn() {

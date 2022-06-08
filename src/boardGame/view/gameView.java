@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class gameView extends JFrame{
     private JLayeredPane mainPanel;
@@ -23,8 +24,10 @@ public class gameView extends JFrame{
     private JPanel boardPanel;
     private JPanel[] tokenPanel;
     private JPanel joinPanel, statusPanel, buttonJoinPanel, buttonPlayPanel;
-    private JPanel turnPanel, diePanel;
+    private JPanel turnPanel, diePanel, inputPanel;
     private JLabel turnLabel, dieLabel;
+    private JButton inputButton;
+    private JTextField inputField;
     private String turnString, dieString;
     private JTable statusTable;
     private JScrollPane scrollPane;
@@ -33,8 +36,6 @@ public class gameView extends JFrame{
     public JButton plusButton, minusButton;
     private JLabel playerCount;
 
-    private boolean startFlag;
-
     private boardGameController controller;
     private BoardGame game;
 
@@ -42,8 +43,6 @@ public class gameView extends JFrame{
 
     public gameView() {
         this.setLayout(new BorderLayout());
-
-        startFlag = false;
 
         controller = new boardGameController();
         game = controller.reset();
@@ -143,12 +142,61 @@ public class gameView extends JFrame{
         turnLabel = new JLabel();
         turnString = "Turn Player : ";
         turnLabel.setFont(new Font(turnLabel.getFont().getFontName(), Font.PLAIN, 30));
+        turnPanel.add(turnLabel);
+
         diePanel = new JPanel();
         dieLabel = new JLabel();
         dieString = "Left To Move : ";
         dieLabel.setFont(new Font(turnLabel.getFont().getFontName(), Font.PLAIN, 30));
-        turnPanel.add(turnLabel);
         diePanel.add(dieLabel);
+
+        inputPanel = new JPanel(new FlowLayout());
+        inputField = new JTextField(10);
+        inputButton = new JButton("입력");
+
+        inputField.setBounds(0, 0, 200, 40);
+
+        inputPanel.add(inputField);
+        inputPanel.add(inputButton);
+
+        inputButton.addActionListener(e -> {
+            boolean flag = true;
+            boardGameController tmpc = null;
+            BoardGame tmp = null;
+            try {
+                tmpc = controller.clone();
+            } catch (CloneNotSupportedException ex) {
+                throw new RuntimeException(ex);
+            }
+            String input = inputField.getText();
+            if (input.length() == game.getMoveCount()) {
+                String[] moveDir = input.split("");
+                int[] prev = game.getCurrentCell();
+
+                for (String i : moveDir) {
+                    tmp = tmpc.move(i);
+                    if (tmp.getCurrentCell() != prev) {
+                        dieLabel.setText(dieString + (tmp.getMoveCount()));
+                        tokenPanel[tmp.getPlayerIndex()].setBounds(14 + tmp.getCurrentCell()[0] * 60, 10 + tmp.getCurrentCell()[1] * 60, 60, 60);
+                        controlPanel.revalidate();
+                        controlPanel.repaint();
+                        prev = tmp.getCurrentCell();
+                    } else {
+                        flag = false;
+                    }
+                }
+            }
+
+            if (!flag) {
+                dieLabel.setText(dieString + (game.getMoveCount()));
+                tokenPanel[game.getPlayerIndex()].setBounds(14 + game.getCurrentCell()[0] * 60, 10 + game.getCurrentCell()[1] * 60, 60, 60);
+                controlPanel.revalidate();
+                controlPanel.repaint();
+            } else {
+                controller = tmpc;
+                moveDone();
+            }
+        });
 
         //Join Panel setting start
         joinPanel = new JPanel();
@@ -229,23 +277,15 @@ public class gameView extends JFrame{
         rollButton.addActionListener(e -> {
             game = controller.roll();
             moving();
-            rollButton.setFocusable(false);
-            this.setFocusable(true);
-            requestFocusInWindow();
+            inputPanel.setVisible(true);
         });
 
         restButton.addActionListener(e -> {
             game = controller.rest();
-            restButton.setFocusable(false);
-            this.setFocusable(true);
-            requestFocusInWindow();
+            game = controller.endTurn();
+            inputPanel.setVisible(false);
+            nextTurn();
         });
-
-        this.addKeyListener(new movingListener());
-
-        if (startFlag && game.getMoveCount() == 0) {
-            moveDone();
-        }
 
         buttonPlayPanel.add(rollButton);
         buttonPlayPanel.add(restButton);
@@ -262,35 +302,6 @@ public class gameView extends JFrame{
         this.setSize(1200, 900); // 프레임 크기 설정
         this.setVisible(true);// 프레임이 보이도록 설정
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        this.setFocusable(true);
-        System.out.println(requestFocusInWindow());
-    }
-
-    class movingListener implements KeyListener {
-        @Override
-        public void keyTyped(KeyEvent e) {
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            if (startFlag) {
-                int[] prev = game.getCurrentCell();
-                game = controller.move(e);
-
-                if (game.getCurrentCell() != prev) {
-                    dieLabel.setText(dieString + (game.getMoveCount()));
-                    tokenPanel[game.getPlayerIndex()].setBounds(14 + game.getCurrentCell()[0] * 60, 10 + game.getCurrentCell()[1] * 60, 60, 60);
-                    controlPanel.revalidate();
-                    controlPanel.repaint();
-                }
-            }
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-
-        }
     }
 
     public void change() {
@@ -298,6 +309,7 @@ public class gameView extends JFrame{
 
         controlPanel.add(turnPanel);
         controlPanel.add(diePanel);
+        controlPanel.add(inputPanel);
         controlPanel.add(statusPanel);
         controlPanel.add(buttonPlayPanel);
 
@@ -311,12 +323,13 @@ public class gameView extends JFrame{
         for (int i = 0; i < game.getPlayerNum(); i++)
             tokenPanel[i].setVisible(true);
 
+        inputPanel.setVisible(false);
+
         controlPanel.revalidate();
         controlPanel.repaint();
     }
 
     public void moving() {
-        startFlag = true;
         dieLabel.setText(dieString + (game.getMoveCount()));
         diePanel.revalidate();
         diePanel.repaint();
@@ -325,13 +338,22 @@ public class gameView extends JFrame{
     }
 
     public void moveDone() {
-        if (game.getMoveCount() == 0) {
-            game = controller.moveAfter();
-            game = controller.endTurn();
+        game = controller.moveAfter();
+        game = controller.endTurn();
+        inputPanel.setVisible(false);
 
-            if (game.isFinish())
-                ;
-        }
+        set
+
+        if (game.isFinish())
+            ;
+        else nextTurn();
+    }
+
+    public void nextTurn() {
+        game = controller.startTurn();
+
+        turnLabel.setText(turnString + (game.getPlayerIndex() + 1));
+        dieLabel.setText(dieString);
     }
 
     private String[] get_status_contents(int idx) {

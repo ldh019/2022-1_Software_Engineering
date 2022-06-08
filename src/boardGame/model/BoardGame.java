@@ -2,7 +2,7 @@ package boardGame.model;
 
 import java.util.ArrayList;
 
-public class BoardGame {
+public class BoardGame{
     private Board board;
     private ArrayList<Player> players;
     private int playerIndex;
@@ -61,9 +61,9 @@ public class BoardGame {
     private Player getNextPlayer() {
         while (true) {
             playerIndex++;
+            if(playerIndex == getPlayerNum()) playerIndex = 0;
             if (!players.get(playerIndex).getGoalIn())
                 break;
-            if(playerIndex == getPlayerNum()) playerIndex = 0;
         }
 
         return players.get(playerIndex);
@@ -139,8 +139,6 @@ public class BoardGame {
 
     public void rest() {
         currentPlayer.getStatus().removeBridge();
-
-        currentPlayer = getNextPlayer();
     }
 
     public boolean isFinish() {
