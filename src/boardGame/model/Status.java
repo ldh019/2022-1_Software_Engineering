@@ -1,5 +1,7 @@
 package boardGame.model;
 
+import java.util.Comparator;
+
 public class Status {
 
     private int pDriver;
@@ -58,3 +60,4 @@ public class Status {
         }
     }
 }
+

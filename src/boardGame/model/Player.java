@@ -2,6 +2,7 @@ package boardGame.model;
 
 public class Player {
     private Status status;
+    private int index;
     private int[] cellxy;
     private int position;
     private boolean goalIn;
@@ -12,6 +13,7 @@ public class Player {
         position = 0;
         goalIn = false;
         bridgeFlag = 0;
+        index = idx;
     }
 
     public void setCellxy(int[] coor) {
@@ -32,6 +34,10 @@ public class Player {
 
     public void move(int idx) {
         position = idx;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public void setGoalIn() {

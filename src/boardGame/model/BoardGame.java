@@ -24,6 +24,20 @@ public class BoardGame{
         return board;
     }
 
+    public ArrayList<Status> getStatus() {
+        ArrayList<Status> list = new ArrayList<>();
+
+        for (Player i : players) {
+            list.add(i.getStatus());
+        }
+
+        return list;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
@@ -93,6 +107,10 @@ public class BoardGame{
         return currentState;
     }
 
+    public int[] getSize() {
+        return board.getSize();
+    }
+
     public void setCrossBridgeLeft() {
         currentPlayer.setBridgeFlagLeft();
     }
@@ -134,7 +152,8 @@ public class BoardGame{
     public void endTurn() {
         currentState = GameState.DONE;
 
-        currentPlayer = getNextPlayer();
+        if (!isFinish())
+            currentPlayer = getNextPlayer();
     }
 
     public void rest() {

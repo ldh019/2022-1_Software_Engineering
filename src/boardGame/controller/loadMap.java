@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,16 +22,21 @@ public class loadMap {
     private int curX, curY;
 
     public loadMap() {
-        Path currentPath;
         String filePath;
         File mapFile;
         Path mapPath;
         List<String> mapData;
 
         try {
-            currentPath = Paths.get("");
-            filePath = currentPath.toAbsolutePath().toString() + "\\resources\\recent.map";
+            filePath = "resources/recent.map";
             mapFile = new File(filePath);
+
+            if(!mapFile.exists()) {
+                String tmpfilePath = "resources/default.map";;
+                File save = new File(tmpfilePath);
+
+                Files.copy(save.toPath(), mapFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
             mapPath = mapFile.toPath();
 
             curX = curY = 0;
@@ -84,7 +90,6 @@ public class loadMap {
                         }
 
                         map.add(new Cell(element, CellType.END, i));
-                        setSize(tmp);
                     }
                     else {
                         success = false;

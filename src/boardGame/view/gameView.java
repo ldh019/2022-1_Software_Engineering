@@ -1,10 +1,7 @@
 package boardGame.view;
 
 import boardGame.controller.boardGameController;
-import boardGame.model.BoardGame;
-import boardGame.model.Cell;
-import boardGame.model.Cells;
-import boardGame.model.DirectionType;
+import boardGame.model.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -104,7 +101,9 @@ public class gameView extends JFrame{
                 }
             }
         }
-        boardPanel.setBounds(10, 10, 800, 800);
+        boardPanel.setBounds(20, 20, game.getSize()[0] * 60, game.getSize()[1] * 60);
+
+        System.out.println(game.getSize()[0] +" "+ game.getSize()[1]);
         boardPanel.setOpaque(true);
         //Board Panel setting end
 
@@ -160,16 +159,18 @@ public class gameView extends JFrame{
         inputPanel.add(inputButton);
 
         inputButton.addActionListener(e -> {
-            boolean flag = true;
-            boardGameController tmpc = null;
-            BoardGame tmp = null;
-            try {
-                tmpc = controller.clone();
-            } catch (CloneNotSupportedException ex) {
-                throw new RuntimeException(ex);
-            }
             String input = inputField.getText();
+
             if (input.length() == game.getMoveCount()) {
+                boolean flag = true;
+                boardGameController tmpc = null;
+                BoardGame tmp = null;
+                try {
+                    tmpc = controller.clone();
+                } catch (CloneNotSupportedException ex) {
+                    throw new RuntimeException(ex);
+                }
+
                 String[] moveDir = input.split("");
                 int[] prev = game.getCurrentCell();
 
@@ -181,20 +182,23 @@ public class gameView extends JFrame{
                         controlPanel.revalidate();
                         controlPanel.repaint();
                         prev = tmp.getCurrentCell();
-                    } else {
+                    } else if (game.getMoveCount() == 0)
+                        break;
+                    else if (!tmp.getCurrentPlayer().getGoalIn()){
                         flag = false;
                     }
-                }
-            }
 
-            if (!flag) {
-                dieLabel.setText(dieString + (game.getMoveCount()));
-                tokenPanel[game.getPlayerIndex()].setBounds(14 + game.getCurrentCell()[0] * 60, 10 + game.getCurrentCell()[1] * 60, 60, 60);
-                controlPanel.revalidate();
-                controlPanel.repaint();
-            } else {
-                controller = tmpc;
-                moveDone();
+                }
+
+                if (!flag) {
+                    dieLabel.setText(dieString + (game.getMoveCount()));
+                    tokenPanel[game.getPlayerIndex()].setBounds(14 + game.getCurrentCell()[0] * 60, 10 + game.getCurrentCell()[1] * 60, 60, 60);
+                    controlPanel.revalidate();
+                    controlPanel.repaint();
+                } else {
+                    controller = tmpc;
+                    moveDone();
+                }
             }
         });
 
@@ -329,10 +333,18 @@ public class gameView extends JFrame{
         controlPanel.repaint();
     }
 
+    public void setStatusTable(ArrayList<Status> list) {
+         for (int i = 0; i < list.size(); i++) {
+             dtm.setValueAt(list.get(i).getBridge(), i, 1);
+             dtm.setValueAt(list.get(i).getPdriver(), i, 2);
+             dtm.setValueAt(list.get(i).getHammer(), i, 3);
+             dtm.setValueAt(list.get(i).getSaw(), i, 4);
+             dtm.setValueAt(list.get(i).getScore(), i, 5);
+         }
+     }
+
     public void moving() {
         dieLabel.setText(dieString + (game.getMoveCount()));
-        diePanel.revalidate();
-        diePanel.repaint();
         controlPanel.revalidate();
         controlPanel.repaint();
     }
@@ -342,18 +354,22 @@ public class gameView extends JFrame{
         game = controller.endTurn();
         inputPanel.setVisible(false);
 
-        set
-
-        if (game.isFinish())
-            ;
+        if (game.isFinish()) {
+            controller.gameFinish(game);
+            this.onExit();
+        }
         else nextTurn();
     }
 
     public void nextTurn() {
+        setStatusTable(game.getStatus());
+
         game = controller.startTurn();
 
         turnLabel.setText(turnString + (game.getPlayerIndex() + 1));
         dieLabel.setText(dieString);
+        controlPanel.revalidate();
+        controlPanel.repaint();
     }
 
     private String[] get_status_contents(int idx) {

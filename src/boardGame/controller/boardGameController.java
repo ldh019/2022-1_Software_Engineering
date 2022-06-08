@@ -3,13 +3,12 @@ package boardGame.controller;
 import boardGame.model.*;
 import boardGame.view.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class boardGameController implements Cloneable{
     private static BoardGame game;
+    private static startView startV;
     private static gameView gameV;
     private static resultView resultV;
 
@@ -92,7 +91,9 @@ public class boardGameController implements Cloneable{
                     game.resetBridge();
             } else
                 game.setMoveCount(game.getMoveCount() + 1);
-        } else {
+        } else if (currentCell.isEnd())
+            game.setMoveCount(0);
+        else {
             if (input == currentCell.getNextDir())
                 game.move(currentPlayer.getPosition() + 1, input);
             else if (!game.isGoalIn() && input == currentCell.getPrevDir())
@@ -107,8 +108,6 @@ public class boardGameController implements Cloneable{
                 game.setMoveCount(game.getMoveCount() + 1);
         }
 
-        if (currentCell.isEnd())
-            game.setMoveCount(0);
         return game;
     }
 
@@ -158,12 +157,21 @@ public class boardGameController implements Cloneable{
         saveMap.load();
     }
 
+    public void gameFinish(BoardGame game) {
+        resultV = new resultView(game);
+
+        resultV.button.addActionListener(e -> {
+            resultV.onExit();
+            programExecute();
+        });
+    }
+
     private static void gameExit() {
         System.exit(0);
     }
 
     private static void programExecute() {
-        startView startV = new startView();
+        startV = new startView();
 
         startV.buttonStart.addActionListener(e -> gameEnter(startV));
         startV.buttonLoad.addActionListener(e -> {
