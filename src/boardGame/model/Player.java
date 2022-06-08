@@ -1,6 +1,6 @@
 package boardGame.model;
 
-public class Player {
+public class Player implements Cloneable{
     private Status status;
     private int index;
     private int[] cellxy;
@@ -14,6 +14,11 @@ public class Player {
         goalIn = false;
         bridgeFlag = 0;
         index = idx;
+    }
+
+    @Override
+    public Player clone() throws CloneNotSupportedException {
+        return (Player) super.clone();
     }
 
     public void setCellxy(int[] coor) {

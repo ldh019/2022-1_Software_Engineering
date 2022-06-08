@@ -23,7 +23,7 @@ public class resultView extends JFrame{
 
         list = game.getPlayers();
 
-        Collections.sort(list, new MyComparator());
+        list.sort(new MyComparator());
         for (Player i : list) {
             JLabel label = new JLabel();
             label.setText("Player " + i.getIndex() + " Score : " + i.getStatus().getScore());
@@ -56,9 +56,9 @@ class MyComparator implements Comparator<Player> {
     @Override
     public int compare(Player o1, Player o2) {
         if (o1.getStatus().getScore() > o2.getStatus().getScore())
-            return 1;
-        else if (o1.getStatus().getScore() > o2.getStatus().getScore())
             return -1;
+        else if (o1.getStatus().getScore() > o2.getStatus().getScore())
+            return 1;
         else return 0;
     }
 }

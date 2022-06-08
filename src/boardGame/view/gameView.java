@@ -103,7 +103,6 @@ public class gameView extends JFrame{
         }
         boardPanel.setBounds(20, 20, game.getSize()[0] * 60, game.getSize()[1] * 60);
 
-        System.out.println(game.getSize()[0] +" "+ game.getSize()[1]);
         boardPanel.setOpaque(true);
         //Board Panel setting end
 
@@ -179,24 +178,24 @@ public class gameView extends JFrame{
                     if (tmp.getCurrentCell() != prev) {
                         dieLabel.setText(dieString + (tmp.getMoveCount()));
                         tokenPanel[tmp.getPlayerIndex()].setBounds(14 + tmp.getCurrentCell()[0] * 60, 10 + tmp.getCurrentCell()[1] * 60, 60, 60);
-                        controlPanel.revalidate();
-                        controlPanel.repaint();
                         prev = tmp.getCurrentCell();
-                    } else if (game.getMoveCount() == 0)
+                    } else if (tmp.getMoveCount() == 0)
                         break;
                     else if (!tmp.getCurrentPlayer().getGoalIn()){
                         flag = false;
+                        dieLabel.setText(dieString + (game.getMoveCount()));
+                        tokenPanel[game.getPlayerIndex()].setBounds(14 + game.getCurrentCell()[0] * 60, 10 + game.getCurrentCell()[1] * 60, 60, 60);
+                        break;
                     }
 
                 }
 
-                if (!flag) {
-                    dieLabel.setText(dieString + (game.getMoveCount()));
-                    tokenPanel[game.getPlayerIndex()].setBounds(14 + game.getCurrentCell()[0] * 60, 10 + game.getCurrentCell()[1] * 60, 60, 60);
+                if (flag) {
+                    controller = tmpc;
+                    game = tmp;
+                    inputField.setText("");
                     controlPanel.revalidate();
                     controlPanel.repaint();
-                } else {
-                    controller = tmpc;
                     moveDone();
                 }
             }
@@ -344,7 +343,10 @@ public class gameView extends JFrame{
      }
 
     public void moving() {
-        dieLabel.setText(dieString + (game.getMoveCount()));
+        if (game.getMoveCount() < 0)
+            dieLabel.setText(dieString + 0);
+        else
+            dieLabel.setText(dieString + (game.getMoveCount()));
         controlPanel.revalidate();
         controlPanel.repaint();
     }

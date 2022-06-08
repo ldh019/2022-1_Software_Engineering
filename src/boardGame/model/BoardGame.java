@@ -1,8 +1,10 @@
 package boardGame.model;
 
+import boardGame.controller.boardGameController;
+
 import java.util.ArrayList;
 
-public class BoardGame{
+public class BoardGame implements Cloneable{
     private Board board;
     private ArrayList<Player> players;
     private int playerIndex;
@@ -18,6 +20,25 @@ public class BoardGame{
         currentState = GameState.WAITING;
 
         this.join(); this.join();
+    }
+
+    @Override
+    public BoardGame clone() throws CloneNotSupportedException {
+        BoardGame clone = (BoardGame) super.clone();
+        ArrayList<Player> tmp = new ArrayList<>();
+        for (Player player : players) {
+            tmp.add(player.clone());
+        }
+        clone.players = tmp;
+        clone.currentPlayer = clone.players.get(playerIndex);
+        clone.board = board.clone();
+        return (BoardGame) clone;
+    }
+
+    public void setNull() {
+        players = null;
+        currentPlayer = null;
+        board = null;
     }
 
     public Board getBoard() {
@@ -141,7 +162,7 @@ public class BoardGame{
     public void roll() {
         currentState = GameState.ROLLING;
 
-        moveCount = board.getDie().roll();
+        moveCount = board.getDie().roll() - getCurrentPlayer().getStatus().getBridge();
     }
 
     public void startTurn() {

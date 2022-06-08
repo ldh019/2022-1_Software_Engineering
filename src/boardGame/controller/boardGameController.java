@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class boardGameController implements Cloneable{
-    private static BoardGame game;
+    private BoardGame game;
     private static startView startV;
     private static gameView gameV;
     private static resultView resultV;
@@ -18,7 +18,14 @@ public class boardGameController implements Cloneable{
 
     @Override
     public boardGameController clone() throws CloneNotSupportedException {
-        return (boardGameController) super.clone();
+        boardGameController clone = (boardGameController) super.clone();
+        clone.game = game.clone();
+        return clone;
+    }
+
+    public void setNull() {
+        game.setNull();
+        game = null;
     }
 
     public BoardGame reset() {
@@ -99,10 +106,10 @@ public class boardGameController implements Cloneable{
             else if (!game.isGoalIn() && input == currentCell.getPrevDir())
                 game.move(currentPlayer.getPosition() - 1, input);
             else if (!game.isGoalIn() && input == DirectionType.LEFT && input == currentCell.getBridgeDir()) {
-                game.move(currentCell.getBridgeNumber(), input);
+                game.move(-currentCell.getBridgeNumber(), input);
                 game.setCrossBridgeLeft();
             } else if (input == DirectionType.RIGHT && input == currentCell.getBridgeDir()) {
-                game.move(currentCell.getBridgeNumber(), input);
+                game.move(-currentCell.getBridgeNumber(), input);
                 game.setCrossBridgeRight();
             } else
                 game.setMoveCount(game.getMoveCount() + 1);

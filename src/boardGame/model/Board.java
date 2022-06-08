@@ -3,7 +3,7 @@ package boardGame.model;
 import java.util.ArrayList;
 import boardGame.controller.loadMap;
 
-public class Board {
+public class Board implements Cloneable{
     private Cells cells;
     private Die die;
     private int sizeX;
@@ -19,6 +19,11 @@ public class Board {
         sizeY = loadMap.getMaxY();
         startX = loadMap.getStartX();
         startY = loadMap.getStartY();
+    }
+
+    @Override
+    public Board clone() throws CloneNotSupportedException {
+        return (Board) super.clone();
     }
 
     public Cells getCells() {
