@@ -71,7 +71,7 @@ public class boardGameController {
 
         if (currentCell.isBridge()) {
             if (!game.isGoalIn() && input == currentCell.getPrevDir()) {
-                game.move(currentCell.getBridgeLeft());
+                game.move(currentCell.getBridgeLeft(), input);
                 if (currentPlayer.getBridgeFlag() == -1) {
                     game.addBridge();
                     game.resetBridge();
@@ -79,7 +79,7 @@ public class boardGameController {
                     currentPlayer.resetBridgeFlag();
 
             } else if (input == currentCell.getNextDir()) {
-                game.move(currentCell.getBridgeRight());
+                game.move(currentCell.getBridgeRight(), input);
                 if (currentPlayer.getBridgeFlag() == 1) {
                     game.addBridge();
                     game.resetBridge();
@@ -89,14 +89,14 @@ public class boardGameController {
                 game.setMoveCount(game.getMoveCount() + 1);
         } else {
             if (input == currentCell.getNextDir())
-                game.move(currentPlayer.getPosition() + 1);
+                game.move(currentPlayer.getPosition() + 1, input);
             else if (!game.isGoalIn() && input == currentCell.getPrevDir())
-                game.move(currentPlayer.getPosition() - 1);
+                game.move(currentPlayer.getPosition() - 1, input);
             else if (!game.isGoalIn() && input == DirectionType.LEFT && input == currentCell.getBridgeDir()) {
-                game.move(currentCell.getBridgeNumber());
+                game.move(currentCell.getBridgeNumber(), input);
                 game.setCrossBridgeLeft();
             } else if (input == DirectionType.RIGHT && input == currentCell.getBridgeDir()) {
-                game.move(currentCell.getBridgeNumber());
+                game.move(currentCell.getBridgeNumber(), input);
                 game.setCrossBridgeRight();
             } else
                 game.setMoveCount(game.getMoveCount() + 1);

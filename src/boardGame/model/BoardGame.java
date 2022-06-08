@@ -28,6 +28,10 @@ public class BoardGame {
         return currentPlayer;
     }
 
+    public int[] getCurrentCell() {
+        return currentPlayer.getCellxy();
+    }
+
     public int getMoveCount() {
         return moveCount;
     }
@@ -59,6 +63,7 @@ public class BoardGame {
             playerIndex++;
             if (!players.get(playerIndex).getGoalIn())
                 break;
+            if(playerIndex == getPlayerNum()) playerIndex = 0;
         }
 
         return players.get(playerIndex);
@@ -104,7 +109,14 @@ public class BoardGame {
         return rank;
     }
 
-    public void move(int idx) {
+    public void move(int idx, DirectionType input) {
+        switch (input) {
+            case UP -> currentPlayer.setCellxy(new int[]{getCurrentCell()[0], getCurrentCell()[1] - 1});
+            case DOWN -> currentPlayer.setCellxy(new int[]{getCurrentCell()[0], getCurrentCell()[1] + 1});
+            case LEFT -> currentPlayer.setCellxy(new int[]{getCurrentCell()[0] - 1, getCurrentCell()[1]});
+            case RIGHT -> currentPlayer.setCellxy(new int[]{getCurrentCell()[0] + 1, getCurrentCell()[1]});
+        }
+
         currentPlayer.move(idx);
     }
 
@@ -115,6 +127,7 @@ public class BoardGame {
     }
 
     public void startTurn() {
+        currentPlayer = players.get(playerIndex);
         currentState = GameState.PLAYING;
     }
 
@@ -149,6 +162,9 @@ public class BoardGame {
         moveCount = 0;
         rank = 1;
         goalInFlag = false;
+
+        for (Player i : players)
+            i.setCellxy(board.getStart());
 
         startTurn();
     }
