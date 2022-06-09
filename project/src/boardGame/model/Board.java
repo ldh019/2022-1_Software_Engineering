@@ -1,6 +1,5 @@
 package boardGame.model;
 
-import java.util.ArrayList;
 import boardGame.controller.loadMap;
 
 public class Board implements Cloneable{

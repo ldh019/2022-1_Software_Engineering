@@ -1,7 +1,5 @@
 package boardGame.model;
 
-import boardGame.controller.boardGameController;
-
 import java.util.ArrayList;
 
 public class BoardGame implements Cloneable{
@@ -31,12 +29,6 @@ public class BoardGame implements Cloneable{
         clone.currentPlayer = clone.players.get(playerIndex);
         clone.board = board.clone();
         return (BoardGame) clone;
-    }
-
-    public void setNull() {
-        players = null;
-        currentPlayer = null;
-        board = null;
     }
 
     public Board getBoard() {

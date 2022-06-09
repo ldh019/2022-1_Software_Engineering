@@ -4,7 +4,6 @@ import boardGame.model.*;
 import boardGame.view.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class boardGameController implements Cloneable{
     private BoardGame game;
@@ -21,11 +20,6 @@ public class boardGameController implements Cloneable{
         boardGameController clone = (boardGameController) super.clone();
         clone.game = game.clone();
         return clone;
-    }
-
-    public void setNull() {
-        game.setNull();
-        game = null;
     }
 
     public BoardGame reset() {
@@ -65,7 +59,6 @@ public class boardGameController implements Cloneable{
     }
 
     public BoardGame move(String d) {
-        game.setCurrentState(GameState.MOVING);
         Player currentPlayer = game.getCurrentPlayer();
         Cell currentCell = game.getBoard().getCells().getCell(currentPlayer.getPosition());
 
