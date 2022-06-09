@@ -197,6 +197,8 @@ public class gameView extends JFrame{
                     controlPanel.revalidate();
                     controlPanel.repaint();
                     moveDone();
+                    rollButton.setEnabled(true);
+                    restButton.setEnabled(true);
                 }
             }
         });
@@ -278,6 +280,8 @@ public class gameView extends JFrame{
         restButton = new JButton("REST");
 
         rollButton.addActionListener(e -> {
+            rollButton.setEnabled(false);
+            restButton.setEnabled(false);
             game = controller.roll();
             moving();
             inputPanel.setVisible(true);

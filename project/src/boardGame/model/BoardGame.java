@@ -9,7 +9,6 @@ public class BoardGame implements Cloneable{
     private ArrayList<Player> players;
     private int playerIndex;
     private Player currentPlayer;
-    private GameState currentState;
     private int moveCount;
     private int rank;
     private boolean goalInFlag;
@@ -17,7 +16,6 @@ public class BoardGame implements Cloneable{
     public BoardGame() {
         board = new Board();
         players = new ArrayList<Player>();
-        currentState = GameState.WAITING;
 
         this.join(); this.join();
     }
@@ -112,20 +110,12 @@ public class BoardGame implements Cloneable{
         return goalInFlag;
     }
 
-    public void setCurrentState(GameState gs) {
-        currentState = gs;
-    }
-
     public void addBridge() {
         currentPlayer.getStatus().addBridge();
     }
 
     public void resetBridge() {
         currentPlayer.resetBridgeFlag();
-    }
-
-    public GameState getCurrentState() {
-        return currentState;
     }
 
     public int[] getSize() {
@@ -160,19 +150,14 @@ public class BoardGame implements Cloneable{
     }
 
     public void roll() {
-        currentState = GameState.ROLLING;
-
         moveCount = board.getDie().roll() - getCurrentPlayer().getStatus().getBridge();
     }
 
     public void startTurn() {
         currentPlayer = players.get(playerIndex);
-        currentState = GameState.PLAYING;
     }
 
     public void endTurn() {
-        currentState = GameState.DONE;
-
         if (!isFinish())
             currentPlayer = getNextPlayer();
     }

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/2022-1_Software_Engineering.iml" filepath="$PROJECT_DIR$/2022-1_Software_Engineering.iml" />
+      <module fileurl="file://$PROJECT_DIR$/boardgame_termproject.iml" filepath="$PROJECT_DIR$/boardgame_termproject.iml" />
     </modules>
   </component>
 </project>

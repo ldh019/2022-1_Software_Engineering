@@ -49,7 +49,7 @@ public class loadMap {
 
             String line = mapData.get(0);
             ArrayList<String> element = new ArrayList<>(Arrays.asList(line.split(" ")));
-            int Bnum = 0, bnum = 0;
+            int Bnum = 0;
 
             if (validCell(element) == 2) {
                 map.add(new Cell(element, CellType.START, 0) );
@@ -73,8 +73,8 @@ public class loadMap {
                             bridge.setBridgeLeft(tmp.getIndex());
                         }
                         else if(tmp.isEbridge()) {
-                            tmp.setBridgeNumber(++bnum);
-                            Cell bridge = map.getCell(-bnum);
+                            Cell bridge = map.getCell(-Bnum);
+                            tmp.setBridgeNumber(Bnum--);
                             bridge.setBridgeRight(i);
                         }
                         map.add(tmp);
