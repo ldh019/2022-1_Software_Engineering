@@ -78,10 +78,6 @@ public class Cell {
         return bridgeRight;
     }
 
-    public void setIndex(int i) {
-        index = i;
-    }
-
     public int getIndex() {
         return index;
     }
@@ -130,10 +126,6 @@ public class Cell {
 
     public boolean isPdriver() {
         return type.equals(CellType.PDRIVER);
-    }
-
-    public void removeTool() {
-        type = CellType.CELL;
     }
 
     public CellType transferToType(String input) {
