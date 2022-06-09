@@ -1,5 +1,5 @@
 package boardGame.model;
-
+B
 import boardGame.controller.loadMap;
 
 public class Board implements Cloneable{

@@ -42,10 +42,6 @@ public class resultView extends JFrame{
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    public void setResult(BoardGame game) {
-        ArrayList<Status> result = game.getResult();
-    }
-
     public void onExit() {
         this.dispose();
     }

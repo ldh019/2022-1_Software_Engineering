@@ -347,10 +347,7 @@ public class gameView extends JFrame{
      }
 
     public void moving() {
-        if (game.getMoveCount() < 0)
-            dieLabel.setText(dieString + 0);
-        else
-            dieLabel.setText(dieString + (game.getMoveCount()));
+        dieLabel.setText(dieString + (game.getMoveCount()));
         controlPanel.revalidate();
         controlPanel.repaint();
     }

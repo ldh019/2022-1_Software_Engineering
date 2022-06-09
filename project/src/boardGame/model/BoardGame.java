@@ -35,16 +35,6 @@ public class BoardGame implements Cloneable{
         return board;
     }
 
-    public ArrayList<Status> getStatus() {
-        ArrayList<Status> list = new ArrayList<>();
-
-        for (Player i : players) {
-            list.add(i.getStatus());
-        }
-
-        return list;
-    }
-
     public ArrayList<Player> getPlayers() {
         return players;
     }
@@ -61,10 +51,6 @@ public class BoardGame implements Cloneable{
         return moveCount;
     }
 
-    public void setMoveCount(int count) {
-        moveCount = count;
-    }
-
     public int getPlayerNum() {
         return players.size();
     }
@@ -73,33 +59,42 @@ public class BoardGame implements Cloneable{
         return playerIndex;
     }
 
-    public ArrayList<Status> getResult() {
-        ArrayList<Status> result = new ArrayList<>();
+    public int getRank() {
+        return rank;
+    }
 
-        for (Player p : players) {
-            result.add(p.getStatus());
-        }
+    public int[] getSize() {
+        return board.getSize();
+    }
 
-        return result;
+    public ArrayList<Status> getStatus() {
+        ArrayList<Status> list = new ArrayList<>();
+
+        for (Player i : players)
+            list.add(i.getStatus());
+
+        return list;
     }
 
     private Player getNextPlayer() {
-        while (true) {
+        do {
             playerIndex++;
-            if(playerIndex == getPlayerNum()) playerIndex = 0;
-            if (!players.get(playerIndex).getGoalIn())
-                break;
-        }
+            if (playerIndex == getPlayerNum()) playerIndex = 0;
+        } while (players.get(playerIndex).getGoalIn());
 
         return players.get(playerIndex);
+    }
+
+    public void setMoveCount(int count) {
+        moveCount = count;
     }
 
     public void setGoalInFlag() {
         goalInFlag = true;
     }
 
-    public boolean isGoalIn() {
-        return goalInFlag;
+    public void addRank() {
+        rank++;
     }
 
     public void addBridge() {
@@ -110,10 +105,6 @@ public class BoardGame implements Cloneable{
         currentPlayer.resetBridgeFlag();
     }
 
-    public int[] getSize() {
-        return board.getSize();
-    }
-
     public void setCrossBridgeLeft() {
         currentPlayer.setBridgeFlagLeft();
     }
@@ -122,13 +113,17 @@ public class BoardGame implements Cloneable{
         currentPlayer.setBridgeFlagRight();
     }
 
-    public void addRank() {
-        rank++;
+
+
+    public boolean isGoalIn() {
+        return goalInFlag;
     }
 
-    public int getRank() {
-        return rank;
+    public boolean isFinish() {
+        return rank > getPlayerNum();
     }
+
+
 
     public void move(int idx, DirectionType input) {
         switch (input) {
@@ -143,6 +138,11 @@ public class BoardGame implements Cloneable{
 
     public void roll() {
         moveCount = board.getDie().roll() - getCurrentPlayer().getStatus().getBridge();
+        if (moveCount < 0) moveCount = 0;
+    }
+
+    public void rest() {
+        currentPlayer.getStatus().removeBridge();
     }
 
     public void startTurn() {
@@ -154,13 +154,7 @@ public class BoardGame implements Cloneable{
             currentPlayer = getNextPlayer();
     }
 
-    public void rest() {
-        currentPlayer.getStatus().removeBridge();
-    }
 
-    public boolean isFinish() {
-        return rank > getPlayerNum();
-    }
 
     public void join() {
         if (players.size() < 4)
